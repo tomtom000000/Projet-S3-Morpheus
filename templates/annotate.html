@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Annotation Webcam</title>
+    <link rel="stylesheet" href="static/style.css">
+    <link rel="icon" type="image/png" href="static/CreaBbox.png">
+</head>
+<body>
+<canvas id="matrixCanvas"></canvas>
+<h2>Annotation via Webcam</h2>
+
+<!-- Flux vidéo -->
+
+<video id="video"  autoplay></video>
+<br>
+<button id="capture-btn">📸 Capturer</button>
+<button id="start-webcam-btn">🎥 Voir le flux vidéo</button>
+<hr>
+
+<!-- Image capturée -->
+<div id="img-container">
+    <img id="image" style="max-width: 600px;">
+</div>
+
+<br>
+
+<div id="annotation-tools" style="display:none;">
+    <label>Label :</label>
+    <select id="label-select">
+        <option value="0">dors</option>
+        <option value="1">ne dors pas</option>
+    </select>
+
+    <br><br>
+
+    <button onclick="addBox()">➕ Ajouter une box</button>
+    <button onclick="deleteLastBox()">Supprimer dernière bbox</button>
+    <button onclick="saveAll()">✅ Sauvegarder</button>
+</div>
+
+
+<script src="/static/annotate.js"></script>
+
+</body>
+</html>

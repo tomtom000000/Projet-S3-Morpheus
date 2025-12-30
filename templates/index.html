@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Projet S3 : Morpheus </title>
+        <link rel="stylesheet" href="static/style.css">
+        <link rel="icon" type="image/png" href="static/CreaBbox.png">
+    </head>
+    <body>
+        <canvas id="matrixCanvas"></canvas>
+        <div class="button-container">
+            <button class="btn btn-on" id="btnOn" onclick="activerFonctionnalite()">
+            ✓ Activer la détection
+            </button>
+        
+            <button class="btn btn-off" id="btnOff" onclick="desactiverFonctionnalite()" disabled>
+            ✕ Désactiver la détection
+            </button>
+        </div>
+        <div id="result">
+            <span id="txt">Pas de diffusion en cours, (╯‵□′)╯︵┻━┻</span>
+            <img id="resultImage" src="" style="max-width: 100%;">
+        </div>
+
+        <!-- La balise video est masquée et ne sera pas affichée -->
+        <video id="video" autoplay playsinline ></video>
+        <a href="/annotate">
+            <button id = "goannot">
+            📸 Démarrer l’annotation caméra
+            </button>
+            <audio id="alertSound" src="/static/alert.mp3"></audio>
+    </body>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</html>

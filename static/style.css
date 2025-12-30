@@ -1,0 +1,135 @@
+#matrixCanvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+}
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    margin: 20px;
+}
+#result {
+    margin: 20px auto;
+    width: 640px;
+    height: 480px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    color: #fff;
+
+    display: flex;
+    justify-content: center;   /* centre horizontalement */
+    align-items: center;        /* centre verticalement */
+    text-align: center;         /* si le texte fait plusieurs lignes */
+}
+#resultImage{
+    border-radius: 20px;
+}
+
+/* UNE LONGUE PARTIE POUR FAIRE DES BOUTONS CAR MONSIEUR LE VEUT*/
+        .button-container {
+            margin: 0 auto;
+        }
+
+        .btn {
+            padding: 4px 10px;
+            font-size: 18px;
+            font-weight: 600;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: left 0.5s ease;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-on {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+        }
+
+        .btn-on:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-on:disabled {
+            background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        .btn-off {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+        }
+
+        .btn-off:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(239, 68, 68, 0.4);
+        }
+
+        .btn-off:disabled {
+            background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        .btn:active:not(:disabled) {
+            transform: translateY(-1px);
+        }
+
+        .btn:hover:not(:disabled) {
+            transform: translateY(-3px);
+        }
+.cursor-crosshair {
+    cursor: url("/static/CreaBbox.png") 15 15, crosshair !important;
+}
+
+#img-container { 
+    position: relative; 
+    display: inline-block; 
+    color: #FFFF;
+}
+
+        .bbox {
+            position: absolute;
+            border: 2px solid red;
+        }
+h2{
+    color : #FFFF;
+}
+#video{
+    display : none;
+}
+
+#goannot{
+            padding: 12px 25px;
+            font-size: 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+}
+label{
+    color : white;
+}
