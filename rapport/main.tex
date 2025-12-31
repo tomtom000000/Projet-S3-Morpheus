@@ -1,0 +1,476 @@
+\documentclass[a4paper, 12pt, twoside]{article}
+\usepackage[utf8]{inputenc}		% LaTeX, comprend les accents !
+\usepackage[T1]{fontenc}		
+\usepackage[francais]{babel}
+\usepackage{lmodern}
+\usepackage{ae,aecompl}
+\usepackage[top=2.5cm, bottom=2cm, 
+			left=3cm, right=2.5cm,
+			headheight=15pt]{geometry}
+\usepackage{graphicx}
+\usepackage{eso-pic}	% Nécessaire pour mettre des images en arrière plan
+\usepackage{array} 
+\usepackage{hyperref}
+\usepackage{tcolorbox}
+\usepackage{xcolor}
+\usepackage{geometry}
+\usepackage{forest}
+
+\input{pagedegarde}
+
+
+
+\title{Projet MORPHEUS}
+
+\entreprise{Le nom de votre entreprise}
+\datedebut{3 novembre 2025}
+\datefin{6 janvier 2026}
+
+
+\newenvironment{membrebox}[2][]{%
+    \begin{tcolorbox}[colback=white, colframe=black, width=\linewidth, halign=center, valign=center, #1]
+    \includegraphics[width=0.9\linewidth]{#2}
+}{%
+    \end{tcolorbox}
+}
+\membrea{Maguet Thomas, 44002564}
+\membreb{Mosser Jules, 44012271}
+
+\begin{document}
+\pagedegarde
+
+\section*{Remerciements}
+Merci aux deux fabuleux camarades qui ont réalisé ce projet, mais également un énorme merci à \cite{lechat}, \cite{Claude}, \cite{Gemini} et \cite{copilot} sans qui tout ça aurait été qu'un vaste mirage. Également, merci à Valentin Bouquet pour sa précieuse aide lors des TD. Enfin, le plus important, merci à Mr. Delbot qui en plus de nous avoir administré de merveilleux cours, nous a orienté vers ce projet riche en découvertes. 
+\newpage
+
+\tableofcontents
+\newpage
+
+\section{Introduction}
+Bonjour, nous vous présentons notre rapport de projet de détection d'étudiants endormis sur lequel nous avons travaillé à deux. Je ne sais pas si nous en sommes complètement fiers mais ce qui est sûr c'est que nous sommes fiers d'avoir fini!
+La figure \ref{chine} est un exemple d'application de la détection d’éléments sur une image. Nous souhaitons faire de même pour pérenniser le règne de l'Auguste Delbot sur l’amphithéâtre G. Chasser et soumettre tous les irrespectueux dormeurs. 
+\begin{figure}[h]
+\centering
+\includegraphics{reco_chine.jpg}
+\caption{Image issue de l'article \href{https://www.reuters.com/article/world/from-laboratory-in-far-west-chinas-surveillance-state-spreads-quietly-idUSKBN1KZ0QC/}{From laboratory in far west, China's surveillance state spreads quietly}, Reuters \label{chine}}
+\end{figure}
+ 
+
+
+\section{Environnement de travail}
+Les membres ont travaillés sur des ordinateurs sous Windows x64 10 ou 11. L'exécution des programmes pythons s'est faite sur \cite{VSCode} avec l'extension Python de Microsoft. Nous avons utilisé Microsoft Edge et Google Chrome comme support pour l'affichage web. Sans cartes graphiques.
+\section{Description du projet et objectifs}
+Notre projet consiste en un programme Python lié à une interface web permettant de détecter les étudiants en cours, plus particulièrement ceux endormis. Nous nous baserons sur la technologie "one-stage".
+	\subsection{Objectifs principaux}
+        \begin{itemize}
+            \item Trouver une méthode de détection adaptée à notre cas
+            \item Mettre en œuvre la méthode
+            \item Interface WEB utilisateur
+            \item Détection en direct
+            \item Détection des classes et des objets fiable
+        \end{itemize}
+	\subsection{Objectifs secondaires}
+        \begin{itemize}
+            \item Trouver un nom marrant
+            \item Esthétique de l'interface 
+            \item Permettre la création d'un data-set depuis l'interface
+            \item Notifier lorsqu'un dormeur est détecté
+        \end{itemize}
+\section{Bibliothèques, Outils et technologies}
+    \subsection{Bibliothèques Python}
+    \begin{itemize}
+    \item \cite{numpy} : Bibliothèque optimisée pour la manipulation de tableau et l'analyse de données.
+    \item \cite{flask} : micro-framework léger pour créer des applications web, idéal pour les petits projets.
+    \item \cite{cv2} : Vision par ordinateur pour manipuler images et vidéos. Inclut détection, filtrage, transformations et analyse avancée.
+    \item \cite{os} : permet d’interagir avec le système d'exploitation, notamment manipuler les fichiers.
+    \item \cite{base64} : Module standard pour encoder/décoder des données en Base64.
+    \item \cite{time} : Outils pour manipuler le temps : pauses, timestamps, mesures de durée.
+    \item \cite{json} : Module pour lire, écrire et manipuler du JSON. Format incontournable pour les échanges client‑serveur.
+    \item \cite{glob} : Permet de rechercher des fichiers via des motifs (wildcards). Utile pour parcourir des dossiers ou filtrer des extensions.
+    \item \cite{ultralytics} : Permet l’inférence, l’entraînement et l’export d'images (pour la détection d'images)
+\end{itemize}
+    \subsection{Outils}
+Nous n'avons pas utilisé de LLM (Large Langage Model) au sein même du programme. Néanmoins, les LLM ont été utilisé en tant qu'outils pour le développement du logiciel et la réflexion autour des contraintes, objectifs, et prises de décisions.Vous pouvez trouver la répartition d'utilisation des LLM à la Table \ref{proportion_ia}.
+    \begin{table}[h]
+    \centering
+    \renewcommand{\arraystretch}{1.5}
+    \begin{tabular}{|c|c|c|c|c|}
+        \hline
+        \textbf{\cite{lechat}} & \textbf{\cite{Claude}} & \textbf{\cite{copilot}} & \textbf{\cite{Gemini}}  \\
+        \hline
+        57\% & 6\% & 34\% & 3\% \\
+        \hline
+    \end{tabular}
+    \caption{Proportion d'utilisation de différents LLM par les membres}
+    \label{proportion_ia}
+\end{table}
+
+Pour l'annotation d'image, nous avons utilisé \cite{labelImg}, logiciel simple d'utilisation.
+
+
+
+\section{Travail réalisé}
+    
+    \subsection{Plan du projet}
+    \begin{forest}
+for tree={
+    font=\ttfamily,
+    grow'=0,
+    child anchor=west,
+    parent anchor=south,
+    anchor=west,
+    calign=first,
+    edge path={
+        \noexpand\path [draw, \forestoption{edge}] (!u.south west) -- +(5pt,0) |- (.child anchor)\forestoption{edge label};
+    },
+    before typesetting nodes={
+        if n=1
+            {insert before={[,phantom]}}
+            {}
+    },
+}
+[/Morpheus
+    [app.py]
+    [best.pt]
+    [requirements.txt]
+    [/labels]
+    [/captures]
+    [README.txt]
+    [/static
+        [script.js]
+        [annotate.js]
+        [style.css]
+        [alert.mp3]
+        [CreaBbox.png]
+    ]
+    [/templates
+        [index.html]
+        [annotate.html]
+    ]
+
+
+]
+\end{forest}
+
+    \subsection{Backend}
+    \begin{itemize}
+    \item Mise en place d’une application web basée sur le framework Flask, assurant la gestion des routes, des échanges JSON et du rendu des pages HTML.
+    \item Création d'un data-set avec des images issues de l'université pour entrainer un modèle YOLO.
+    \item Intégration du modèle YOLO (Ultralytics) pour la détection d’étudiants endormis à partir d’images issues de la webcam.
+    \item Développement de la route /detect permettant de recevoir des images encodées en base64, de les décoder, d’exécuter la détection et de renvoyer une image annotée.
+    \item Mise en place de routes dédiées à l’annotation : /upload pour l’enregistrement des images brutes et /save pour la sauvegarde des annotations au format YOLO.
+    \item Implémentation d’un système de nettoyage complet du dataset via la route /delete-all.
+    \item Gestion automatique des répertoires "captures" et "labels" avec création si nécessaire.
+    \item retranscrire les annotations faites par l'utilisateur en fichier adéquat pour l’entraînement.
+    \item Autres fonctions auxiliaires.
+    \end{itemize}
+    \subsection{Frontend}
+    \begin{itemize}
+    \item Uniformisation de l’interface
+    \item De beaux boutons pour index.html.
+    \item Développement de la page principale index.html permettant d’activer ou désactiver la détection en temps réel.
+    \item Mise en place d’un affichage dynamique des résultats de détection (image annotée + message d’état).
+    \item Ajout d'une autre page pour faire de l'annotation.
+    \item Nombre incalculable de lignes Javascript.
+    \item Alerte et son quand un dormeur est détecté.
+    \item Très beau background ! 
+    
+\end{itemize}
+\newpage
+\subsection*{Fonctionnalités Réalisées}
+\begin{center}
+\begin{tabular}{| m{2.0cm} | m{3cm} | m{6cm} | m{1.95cm} | m{1.95cm} |}
+\hline
+\textbf{Nom} & \textbf{Localisation} & \textbf{Détails} & \textbf{Recherches} & \textbf{Réalisation} \\
+\hline
+ route /detect & app.py, L.31 & Récupère les images depuis le navigateur, les traites puis les analyses et les renvoies avec Bbox et classes (pour le flux en direct) & Thomas, Jules & Thomas\\
+\hline
+ route /upload & app.py, L.65 & Permet la prise d'une photo à un instant t et l'envoie au serveur qui l'enregistre en vue d'une annotation manuelle & Jules & Jules \\
+\hline
+route /save & app.py, L.86 & Suite à la validation de l'annotation utilisateur, enregistre définitivement l'image et les annotations dans un fichier texte. Ils sont rangés dans des dossiers adéquats en vue de l’entraînement & Thomas & Thomas\\
+\hline
+route /delete-all & app.py, L.114 & Permet de supprimer les images et annotations enregistrées pour faire de la place (plus pour les testes que l'utilisateur) & Thomas & Thomas\\
+\hline
+Flask(en global) & app.py & Le reste des fonctions et routes (pas très importantes) & Jules, Thomas & Jules, Thomas\\
+\hline
+Modèle de détection & best.pt & fichier issu de l’entraînement, fait uniquement avec un data-set d'images de Nanterre Université, et de l'annotation manuelle pour chaque image & Thomas, jules & Thomas, Jules\\
+\hline
+Html/css & index.html, annotate.html, style.css & squelette de l'interface WEB avec mise en forme & Thomas & Thomas \\
+\hline
+Dynamisme WEB & script.js, annotate.js & Permet des interaction Web simple et agréable à l'utilisateur & Jules & Jules\\
+\hline
+Traitement données coté WEB & script.js, annotate.js & fait le lien entre le serveur et la page (requêtes JSON et autre) & Thomas & Thomas \\
+\hline
+fond Matrix & script.js, annotate.js & Un beau fond d'écran & jules, Thomas & Thomas \\
+\hline
+
+\end{tabular}
+\end{center}
+\newpage
+\subsection*{Fonctions Non Réalisées}
+\begin{center}
+\begin{tabular}{| m{4cm} | m{6cm} | m{6cm} |}
+\hline
+\textbf{Nom} & \textbf{Détail} & \textbf{Raison} \\
+
+\hline
+    Livre des dormeurs & Si une personne est prise entrain de dormir, on zoomera sur elle et on l'ajoutera à un album photo & L'équipe n'était pas motivé car la reconnaissance se fait très mal (les niveaux de confiances sont bas et beaucoup de faux positifs). L'album n'aurait rien donné. \\
+\hline
+    Validation utilisateur & Quand un dormeur est détecté, demander à l'utilisateur de valider ou non à détection, apprentissage par renforcement & Le modèle YOLO ne permet pas ce genre d'apprentissage. \\
+\hline
+    Surveillance premium & reconnaître les étudiants, historique de leur endormissement & Demande une IA très bien entraînée, des recherches approfondies \\
+\hline 
+\end{tabular}
+\end{center}
+\subsection*{Fonctions Partiellement Réalisées}
+\begin{table}[h]
+\label{Fonctions Partiellement Réalisées}
+\begin{tabular}{| m{2cm} | m{2.1cm} | m{3.6cm} | m{3.4cm} | m{2cm} | m{2cm} |}
+\hline
+\textbf{Nom} & \textbf{Localisation} & \textbf{Détail} & \textbf{Raison(s)} & \textbf{Recherches} & \textbf{Réalisation}\\
+\hline
+ Modèle de détection & best.pt & permet la détection des éléments, néanmoins ne détecte pas très bien et avec des niveaux de confiances faibles & La taille du data-set est trop petit, on utilisé qu'une dizaine d'images & Thomas & Thomas \\
+\hline
+Entrainement après annotation & app.py, L.86 & L'entrainement ne se fait pas automatiquement, il faut créer le fichier YAML et executer la commande dans le terminal. & demande de modifier "best.pt" pendant son utilisation, créer un fichier avec une extention particulière... & Jules, Thomas & Jules, Thomas \\
+\hline 
+Alerte détection dormeur & script.js L.67-70, app.py L.48-50 & Emet un signal sonore lors qu'un dormeur est détecté. Mais le fait avant que l'image concernée soit affichée. & On a essayé des choses, on trouve pas :( & Thomas & Thomas\\
+\hline
+\end{tabular}
+\end{table}
+
+\section{Difficultés rencontrées}
+    \subsection{Choix nomination projet}
+    Comme l'an dernier le choix du nom est un sujet pointilleux. Cette année nous avons pris le choix de ne pas polémiquer entre nous, et de simplement demander à l'IA. Nous avons constaté une nette amélioration des LLM à faire des jeux de mots et créer des noms de projet. En quelques échanges nous avons eu une bonne piste "Morpheus.exe". Comme, il s'agit d'un projet des services secrets Delbotiens, nous avons privilégier un nom de code "Projet MORPHEUS". Morpheus personnage de Matrix renvoyant aux background du site. Son nom est inspiré de la déesse des rêves Morphée, en direct lien avec notre projet sur les dormeurs.
+    \subsection{Accès à la caméra}
+    Pendant un petit moment durant la phase de recherches/discussions/testes, tous les LLM que l'on utilisait nous disaient de se servir de la caméra depuis le serveur et donc d’accéder à un port périphérique de l'ordinateur. Néanmoins, nous ne pouvions pas accéder à ces périphériques étant sur des environnements virtuels (on avait des erreurs...). Aucun LLM ne nous a proposé de passer par la caméra du navigateur internet, on a bouclé sur ce problème un long moment. Mention spéciale à Claude pour son sauvetage miraculeux, après la 4ème fois qu'on lui expliquait le projet.
+    \subsection{Le choix du modèle IA}
+    Problème particulier dont on est à l'origine. On n'a pas assez parler/questionner les LLM au sujet du choix du modèle de détection d'image. On est passé par 3 étapes, qui nous on fait perdre beaucoup de temps. Mais également à mieux gérer les LLM.
+    \begin{enumerate}
+        \item choix : Modèle pré-entraîné OpenCV, nous étions impatient de tester la reconnaissance d'image, voir comment ça marche, si ça passe bien. On a pris le premier modèle que Mistral a conseillé... Il détectait des individus, mais impossible de le modifier pour notre utilisation, nous sommes arrivés à une impasse dans notre discussion avec les LLM.
+        \item choix : YOLOv5, Il est très bien, on  a plus pris le temps de discuter avec les LLM, il était vendu comme idéal pour notre type de projet. Il fonctionnait, on l'a utilisé pendant une grande partie du développement. Néanmoins, on a eu un problème de compatibilité entre bibliothèque python car YoloV5 est une version ancienne (2020), non mise à jour. On voulait pas perdre le travail déjà effectué, on a essayé de tout rendre compatible sous les conseils des LLM. A chaque fois qu'on réglait un problème, un autre survenait, les dépendances, les bibliothèques, la version de python... On a stoppé les frais et upgrade sur YOLOv11.
+        \item choix : Yolov11, on voulais transférer le fichier d’entraînement de la V5 à la V11, mais les deux versions ne sont pas compatibles. On a du reentrainé le modèle et changer des bouts de code car les deux versions ne fonctionnent pas exactement de la même façon. Il s'agit du modèle définitif retenu.
+    \end{enumerate}
+ \subsection{L'annotation}
+ Au début, on nous a conseillé d'utiliser \cite{labelImg}. Néanmoins il faillait directement exécuter un code python qui demandait d'installer beaucoup de dépendance (relou). On a demandé, s'il n'y avait une façon plus simple, il y avait un fichier exécutable prêt à l'emploi !! Problème de stabilité : Crash, freeze... Donc on est parti sur la voie de faire notre propre outil d'annotation avec les LLM.
+    
+\section{Bilan}
+    \subsection{Conclusion}
+    Ce projet nous a beaucoup appris à discuter avec l'IA en lui écrivant des prompts précis afin qu'elle puisse au mieux nous guider/aider, ou en lui demandant d'expliquer certains points avec précision pour mieux comprendre ce qu'elle pouvait générer. Aussi, nous avons appris à quel point coder avec une IA comme \cite{lechat} pouvait faciliter la tâche lors de tâches répétitives et éviter de faire des erreurs mais surtout pour remarquer ses dites erreurs et les corriger. Par contre, \cite{Claude} et \cite{Gemini} sont trop forts pour la création WEB, on a préféré rester sur des LLM plus basique pour qu'on puisse comprendre ce qu'on fait, avoir un site personnalisé et savoir comment modifier des éléments si besoin. Nous avons pu comprendre le fonctionnement de la reconnaissance d'image, néanmoins notre IA à beaucoup de lacune. Nous espérons pouvoir encore plus l’entraînée afin d'obtenir des résultats concrets.
+    \subsection{Perspectives}
+    Nous avons pu nous rendre compte à quel point, même avec un niveau encore débutant en codage, avec les bonnes IA il est possible de coder quelque chose d'assez complexe en tout cas dans un temps aussi restreint. Il est indéniable que les IA vont encore progresser en codage et qu'elles vont faire part intégrante de notre avenir si nous sommes amenés à continuer à programmer. Il est donc nécessaire via des projets comme celui-ci d'apprendre à programmer en les utilisant.
+
+
+\newpage
+\section{Bibliographie}
+Nous n'avons aucune source de type bibliographique à présenter.
+
+\section{Webographie}
+\begin{thebibliography}{2}
+
+\subsection*{Bibliothèques Python}
+\bibitem[Flask]{flask}\url{https://flask.palletsprojects.com/}
+\bibitem[OpenCV]{cv2} \url{https://opencv.org/}
+\bibitem[NumPy]{numpy} \url{https://numpy.org/}
+\bibitem[base64]{base64} \url{https://docs.python.org/3/library/base64.html}
+\bibitem[os]{os} \url{https://docs.python.org/3/library/os.html}
+\bibitem[time]{time} \url{https://docs.python.org/3/library/time.html}
+\bibitem[json]{json} \url{https://docs.python.org/3/library/json.html}
+\bibitem[glob]{glob} \url{https://docs.python.org/3/library/glob.html}
+\bibitem[Ultralytics]{ultralytics} \url{https://docs.ultralytics.com/}
+
+\subsection*{IA utilisées}
+\bibitem[Copilot]{copilot}\url{https://copilot.microsoft.com/}
+\bibitem[Mistral]{lechat}\url{https://mistral.ai/}
+\bibitem[Claude]{Claude}\url{https://claude.ai/}
+\bibitem[Gemini]{Gemini}\url{https://gemini.google.com/}
+
+\subsection*{Sites consultés}
+\bibitem[GitHub]{github}\url{https://github.com/}
+\bibitem[StackOverflow]{stackoverflow}\url{https://stackoverflow.com/}
+\bibitem[MDN]{mdn}\url{https://developer.mozilla.org/}
+\bibitem[DataCamp]{datacamp}\url{https://www.datacamp.com/}
+
+\subsection*{Logiciels}
+\bibitem[labelImg]{labelImg}\url{https://github.com/HumanSignal/labelImg}
+\bibitem[Visual Studio Code]{VSCode}\url{https://code.visualstudio.com/}
+\end{thebibliography}
+
+
+
+
+\newpage
+\section{Annexes}
+\appendix
+\makeatletter
+\def\@seccntformat#1{Annexe~\csname the#1\endcsname:\quad}
+\makeatother
+	\section{Cahier des charges}
+    Comme on a commencé avec l'interface, il était facile de voir ce qu'on cherchait : L'utilisateur devait pouvoir activer la détection de dormeur, mais également l'annotation et vérifier si sa caméra fonctionne.
+    \begin{itemize}
+    \item Modèle de détection de dormeur fonctionnel
+    \item Interface WEB fiable
+    \item Système d'annotation
+    \end{itemize}
+    \section{Exemple d'exécution du projet}
+    \subsection{Présentation globale de l'exécution du projet}
+    Nous avons mis en scène l'exécution du projet dans sa globalité en vidéo (\href{https://youtu.be/BjbSb5r7T5Y}{Clique ici}). Cette courte vidéo montre les fonctionnalités majeurs du projet : Détection de dormeurs/ non dormeurs, annotation, utilisation des raccourcis et teste caméra.\\
+    Les étapes de la vidéo sont détaillées dans l'annexe \ref{sec:ManuUse}, pour guider les utilisateurs.
+    \subsection{Exécution détaillé}
+    \subsubsection{Activer la détection}
+    Lorsque le bouton "Activer la détection" est actionné, plusieurs choses vont se passer:
+     \begin{itemize}
+        \item Changement d'effets visuels sur les boutons "Activer la détection" et "Désactiver la détection".
+        \item Demander l'accès à la caméra du navigateur.
+        \item Toute les 500ms un image du flux vidéo sera envoyé au serveur Flask sous le bon format.
+        \item Le serveur va enregistrer puis traiter l'image.
+        \item Le serveur renvoie l'image résultante avec les Bbox et les informations sur les classes d'éléments.
+        \item L'image résultante sera affiché, s'il y au moins un élément "dort", alors il y aura une alerte sonore.
+   \end{itemize}
+   \subsubsection{Désactiver la détection}
+    Lorsque le bouton "Désactiver la détection" est actionné, plusieurs choses vont se passer:
+       \begin{itemize}
+        \item Changement d'effets visuels sur les boutons "Activer la détection" et "Désactiver la détection".
+        \item La page WEB va arrêter d'envoyer des images au serveur.
+        \item La dernière image affichée sera supprimée.
+        \item La caméra s'éteindra.
+   \end{itemize}
+   \subsubsection{Page annotation}
+   Lorsque le bouton "Démarrer l'annotation caméra" est actionné, plusieurs choses vont se passer:
+   \begin{itemize}
+       \item Envoie un requête au serveur Flask pour accéder à la page d'annotation
+       \item Le serveur renvoie la page "annotate.html".
+   \end{itemize}
+   \subsubsection{Voir le flux vidéo}
+   Lorsque le bouton "Voir le flux vidéo" est actionné, plusieurs choses vont se passer
+   \begin{itemize}
+       \item Active la caméra
+       \item Renvoie le flux vidéo sur la page directement sans passer par le serveur.
+   \end{itemize}
+   \subsubsection{Capturer}
+   Lorsque le bouton "Capturer" est actionné, plusieurs choses vont se passer
+   \begin{itemize}
+       \item Active la caméra.
+       \item prend un photo.
+       \item l'envoie au serveur.
+       \item le serveur enregistrer l'image.
+       \item affiche le rendu sur la page WEB.
+       \item Fait apparaître les boutons pour l'annotation.
+       \item Désactive la caméra.
+   \end{itemize}
+   \subsubsection{Ajouter une box}
+   Lorsque le bouton "Ajouter une box" est actionné, plusieurs choses vont se passer
+   \begin{itemize}
+       \item Met une image personnalisé sur le curseur.
+       \item Lorsqu'un clic est détecté sur l'image enregistre les cordonnées
+       \item Au deuxième clic, créer un objet et dessin la box en choisissant la couleur en fonction du label sélectionné.
+       \item Enregistre l'objet dans une liste.
+       \item Retire l'image personnalisée du curseur
+   \end{itemize}
+    \subsubsection{Supprimer dernière bbox}
+   Lorsque le bouton "Supprimer dernière bbox" est actionné, plusieurs choses vont se passer
+   \begin{itemize}
+       \item Parcours la liste des objets "box".
+       \item Supprime l'affichage de cette box de la page WEB.
+       \item Retire la box de la liste.
+   \end{itemize}
+       \subsubsection{Sauvegarder}
+   Lorsque le bouton "Sauvegarder" est actionné, plusieurs choses vont se passer
+   \begin{itemize}
+       \item Envoie au serveur les coordonnées des points selectionnés par l'utilisateur. 
+       \item Le serveur converti au format YOLO les informations (coordonnées, classes).
+       \item Enregistrer les informations converties dans un fichier .txt dans le dossier label.
+       \item Message de confirmation de la sauvegarde.
+       \item Supprime de la page l'image et les box, affiche un message d'attente.
+   \end{itemize}
+    
+    \section{Manuel utilisateur}
+    Avant toute utilisation veillez à installer toutes les dépendances et bibliothèques du projet. Un fichier "requirements.txt" est à votre disposition dans le dossier du projet.\\
+    Pour chaque étape du manuel où l'on vous demande d'appuyer sur un bouton, il y aura un curseur rose sur l'image sur le bouton cité.
+    \subsection{Activer la détection}
+    \label{sec:ManuUse}
+    \begin{figure}[h]
+    \centering
+    \includegraphics[width=8cm]{Img1.png}
+    \caption{Une fois arrivé sur l'interface, l’utilisateur peut actionner la détection de dormeur via le bouton verten haut de la page.}
+    \label{Interface1}
+    \end{figure}
+    \begin{figure}[h]
+    \centering
+    \includegraphics[width=8cm]{Img2.png}
+    \caption{Exemple de résultat attendu après l'activation. Des rectangles bleus (ne dort pas) et bleus foncés (dort, voir la figure \ref{Interface3}) seront visible.\\ Un notification avec un bruit d'alerte seront déclenchés quand un/plusieurs dormeurs sont détectés. L'image concernée apparaît après avoir appuyé sur "OK" de la notification.}
+    \label{Interface2}
+    \end{figure}
+    \newpage
+    \subsection{Désactiver la détection}
+    \begin{figure}[h]
+    \centering
+    \includegraphics[width=12cm]{Img3.png}
+    \caption{Si l'utilisateur souhaite arrêter la détection, il lui suffit d'appuyer sur le bouton rouge en haut. Il retournera à l'interface vu à la figure \ref{Interface1}.}
+    \label{Interface3}
+    \end{figure}
+    \newpage
+    \subsection{Accéder à la page d'annotation}
+    \begin{figure}[h]
+    \centering
+    \includegraphics[width=8cm]{Img4.png}
+    \caption{Si l'utilisateur souhaite se rendre sur la page dédiée à l'annotation d'image, il doit appuyer sur le bouton vert en bas.}
+    \label{Interface4}
+    \end{figure}
+    \begin{figure}[h]
+    \centering
+    \includegraphics[width=12cm]{Img5.png}
+    \caption{Rendu attendu de la page annotation.}
+    \label{Interface5}
+    \end{figure}
+    \newpage
+    \subsection{Visualiser le flux pur de la caméra de son appareil}
+    \begin{figure}[h]
+    \centering
+    \includegraphics[width=8cm]{Img6.png}
+    \caption{Appuyer sur le bouton "Voir le flux vidéo". Si vous déclenchez une nouvelle fois ce bouton l'interface reviendra à son état d'origine.}
+    \label{Interface6}
+    \end{figure}
+    \begin{figure}[h]
+    \centering
+    \includegraphics[width=8cm]{Img7.png}
+    \caption{Exemple de résultat attendu.}
+    \label{Interface7}
+    \end{figure}
+    \newpage
+    \subsection{Prendre un photo depuis la caméra de l'appreil}
+    \begin{figure}[h]
+    \centering
+    \includegraphics[width=8cm]{Img8.png}
+    \caption{Appuyer sur le bouton "Capturer". Si vous appuyez une autre fois alors un autre photo sera prise et la précédente sera supprimé.}
+    \label{Interface8}
+    \end{figure}
+    \begin{figure}[h]
+    \centering
+    \includegraphics[width=8cm]{Img9.png}
+    \caption{Exemple de résultat attendu.}
+    \label{Interface9}
+    \end{figure}
+    \newpage
+    \subsection{L'annotation}
+    \begin{table}[h] \centering \begin{tabular}{|l|l|c|} \hline \textbf{Action} & \textbf{Bouton} & \textbf{Touche} \\ \hline Ajouter une box & Ajouter une box & C \\ \hline Supprimer la dernière box & Supprimer dernière bbox & V \\ \hline Supprimer les captures et annotations & Aucun & D \\ \hline Sauvegarder & Sauvegarder & Aucune \\ \hline \end{tabular} \caption{Récapitulatif des actions et raccourcis} \end{table}
+    \begin{itemize}
+    
+    \item Pour la création de box, le curseur est changé quand vous êtes dans ce mode (pour confirmer que vous êtes bien dans le mode création). Vous aurez à cliquer sur 2 endroit de la capture pour que cela forme votre rectangle d'annotation. Veillez à bien choisir la bonne classe dans le menu déroulant avant d'annoter.
+    \item  Pour la suppression de box, utiliser le bouton ou la touche. Pas d'indications spécifiques.
+    \item  Changer de label, il suffit d'ouvrir le menu déroulant et de choisir la classe qui convient.
+    \item Sauvegarder, vous retrouverez les images dans le dossier /captures et les annotations dans le dossier /labels. L'annotation est conçu pour des modèles YOLO.
+    \item Supprimer les fichiers, supprime les captures et les annotations.
+    \end{itemize}
+    \begin{figure}[h]
+    \centering
+    \includegraphics[width=8cm]{Img10.png}
+    \caption{Les boutons en lien avec l'annotation.}
+    \label{Interface10}
+    \end{figure}
+    \begin{figure}[h]
+    \centering
+    \includegraphics[width=8cm]{Img11.png}
+    \caption{Curseur personnalisé lors de la création de box}
+    \label{Interface11}
+    \end{figure}
+\end{document}
